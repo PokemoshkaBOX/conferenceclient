@@ -1,7 +1,9 @@
-import React, {useContext, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { Button, Form, Modal } from 'react-bootstrap';
 import {Context} from "../../index";
-import {createArticle} from "../../http/ConferenceAPI";
+import {createArticle, fetchOneConference} from "../../http/ConferenceAPI";
+import {useParams} from "react-router-dom";
+import {fetchUsersInConference} from "../../http/userAPI";
 
 const ConfReg = ({ show, onHide, stat, id}) => {
   const {user} = useContext(Context)
@@ -15,7 +17,11 @@ const ConfReg = ({ show, onHide, stat, id}) => {
     addArticles()
     onHide();
   };
-
+    const [conference, setOneConference] = useState({})
+    console.log(id)
+    useEffect(() => {
+        fetchOneConference(id).then(data => setOneConference(data))
+    }, [id])
   const handleFileChange = (e) => {
     const file = e.target.files[0]; // Получение первого выбранного файла
     setFile(e.target.files[0])
@@ -55,9 +61,14 @@ const ConfReg = ({ show, onHide, stat, id}) => {
                                     onChange={(e) => setAnnotation(e.target.value)}/>
                   </Form.Group>
                   <Form.Group controlId="formSection">
-                      <Form.Label>Секция</Form.Label>
-                      <Form.Control as="textarea" onChange={(e) => setSection(e.target.value)}/>
-                  </Form.Group>
+                    <Form.Label>Секция</Form.Label>
+                    <Form.Control as="select" onChange={(e) => setSection(e.target.value)}>
+                        <option value="">Выберите направление</option>
+                        {conference.infosections && conference.infosections.split(',').map((direction, index) => (
+                            <option key={index} value={direction.trim()}>{direction.trim()}</option>
+                        ))}
+                    </Form.Control>
+                </Form.Group>
                   <Form.Group controlId="formTeacher">
                       <Form.Label>Преподаватель</Form.Label>
                       <Form.Control type="text" onChange={(e) => setTeacher(e.target.value)}/>

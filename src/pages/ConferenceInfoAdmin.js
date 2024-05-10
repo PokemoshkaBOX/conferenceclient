@@ -116,7 +116,10 @@ const ConferenceInfoAdmin = () => {
                                             <div><b>Описание:</b> </div>
                                             <div>{conference.info}</div>
                                             <div className="mt-3"><b>Программа конференции:</b>{conference.infoprog}</div>
-                                            <div className="mt-3"><b>Секции и научные направления конференции:</b>{conference.infosections}</div>
+                                            <div className="mt-3"><b>Секции и научные направления конференции:</b></div>
+                                            {conference.infosections && conference.infosections.split(',').map((direction, index) => (
+                                                <li key={index}>{`${index + 1}. ${direction.trim()}`}</li>
+                                            ))}
                                         </Col>
                                         <Col style={{ marginTop: "20px" }}>
                                             <div><b>Место проведения:</b></div>

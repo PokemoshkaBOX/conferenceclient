@@ -7,6 +7,7 @@ import TimeRange from "../conferenceComponents/TimeRange";
 import {createConference, deleteConference, fetchConferences} from "../../http/ConferenceAPI";
 const CreateConference = ({show, onHide}) => {
     const {conferences} = useContext(Context)
+    const [directions, setDirections] = useState([]);
     const [chosenDateStart, setChosenDateStart] = useState('2024-03-12');
     const [chosenDateEnd, setChosenDateEnd] = useState('2024-03-20');
     const [title, setTitle] = useState('')
@@ -18,6 +19,17 @@ const CreateConference = ({show, onHide}) => {
     const [infoProg, setInfoProg] = useState("")
     const [infoSections, setInfoSections] = useState("")
     const [infoPurposes, setInfoPurposes] = useState("")
+
+    const addDirection = () => {
+        setDirections([...directions, infoSections]);
+        setInfoSections(""); // Очищаем поле ввода после добавления
+    };
+
+    const removeDirection = (index) => {
+        const updatedDirections = [...directions];
+        updatedDirections.splice(index, 1);
+        setDirections(updatedDirections);
+    };
     const handleTimeRangeChange = (start, end) => {
         setStartTime(start);
         setEndTime(end);
@@ -47,7 +59,7 @@ const CreateConference = ({show, onHide}) => {
         formData.append('infoarea', infoArea)
         formData.append('infoplan', infoPlan)
         formData.append('infoprog', infoProg)
-        formData.append('infosections', infoSections)
+        formData.append('infosections', directions)
         formData.append('infopurposes', infoPurposes)
         createConference(formData).then(data =>
             Reload(),
@@ -118,14 +130,34 @@ const CreateConference = ({show, onHide}) => {
                          placeholder ="Цели конференции"
                          style={{minHeight: "200px"}}
                      />
-                     <Form.Control
-                         as="textarea"
-                         value={infoSections}
-                         onChange={e => setInfoSections(e.target.value)}
-                         className="mt-3"
-                         placeholder ="Секнции и научные направления конференции"
-                         style={{minHeight: "200px"}}
-                     />
+                     <Form.Group className="mt-3">
+                        <Form.Label>Добавить направление</Form.Label>
+                        <Row>
+                            <Col>
+                                <Form.Control
+                                    value={infoSections}
+                                    onChange={e => setInfoSections(e.target.value)}
+                                    placeholder="Введите направление"
+                                />
+                            </Col>
+                            <Col>
+                                <Button onClick={addDirection}>Добавить</Button>
+                            </Col>
+                        </Row>
+                    </Form.Group>
+                     {directions.length > 0 && (
+                        <div>
+                            <h5>Список направлений:</h5>
+                            <ul>
+                                {directions.map((direction, index) => (
+                                    <li key={index} className="mt-2" style={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                                        {index+1}.{" "}{direction}
+                                        <Button style={{marginLeft: "10px"}} onClick={() => removeDirection(index)}>Удалить</Button>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
                      <div style={{marginTop: "20px"}}></div>
 
                      <CalendarRange onDateRangeChange={handleDateRangeChange}/>

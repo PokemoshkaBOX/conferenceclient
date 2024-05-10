@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { Row, Col, Button } from 'react-bootstrap';
-import {createConference, fetchConferences} from "../../http/ConferenceAPI";
-import {editUser, getAllUsers, getOneUserInfo} from "../../http/userAPI";
+import {editUser, getOneUserInfo} from "../../http/userAPI";
 
 const UserInfo = ({ user}) => {
     const [editing, setEditing] = useState(false); // Состояние редактирования

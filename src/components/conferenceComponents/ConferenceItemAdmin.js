@@ -1,8 +1,7 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import { Button, Card, Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import {CONFERENCEITEM_ROUTE, CONFERENCEITEMADMIN_ROUTE} from "../../utils/consts";
-import ConfReg from "./ConfReg";
+import {CONFERENCEITEMADMIN_ROUTE} from "../../utils/consts";
 import EditConference from "../models/EditConference"; // Импорт компонента для редактирования конференции
 import {deleteConference, fetchConferences} from "../../http/ConferenceAPI";
 import {observer} from "mobx-react-lite";
@@ -11,8 +10,6 @@ import {Context} from "../../index"; // Предполагается, что у 
 const ConferenceItemAdmin = observer(({ conference }) => {
   const {conferences} = useContext(Context)
   const history = useNavigate();
-  const [showConfReg, setShowConfReg] = useState(false);
-  const [stat, setStat] = useState();
   const [showEditConference, setShowEditConference] = useState(false); // Состояние для отслеживания видимости компонента для редактирования конференции
 
   const formatDate = (dateTimeString) => {
@@ -25,15 +22,6 @@ const ConferenceItemAdmin = observer(({ conference }) => {
     const hours = date.getHours().toString().padStart(2, '0');
     const minutes = date.getMinutes().toString().padStart(2, '0');
     return `${hours}:${minutes}`;
-  };
-
-  const handleConfRegShow = (role) => {
-    setShowConfReg(true);
-    setStat(role);
-  };
-
-  const handleConfRegHide = () => {
-    setShowConfReg(false);
   };
 
   const handleEditConferenceShow = () => {
@@ -85,7 +73,6 @@ const ConferenceItemAdmin = observer(({ conference }) => {
           </Col>
         </Row>
       </Card>
-      <ConfReg show={showConfReg} onHide={handleConfRegHide} stat={stat} />
       {showEditConference && ( // Отображение компонента для редактирования, если showEditConference равно true
         <EditConference show={showEditConference} onHide={handleEditConferenceHide} conference={conference} />
       )}

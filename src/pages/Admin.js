@@ -5,7 +5,6 @@ import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import ConferenceListUsers from "../components/UserComponents/ConferenceListUsers";
 import Search from "../components/Search";
-import ConferenceList from "../components/conferenceComponents/ConferenceList";
 import ConferenceListAdmin from "../components/conferenceComponents/ConferenceListAdmin";
 import {observer} from "mobx-react";
 import {Context} from "../index";
