@@ -1,15 +1,17 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {Card, Col, Container, Row} from "react-bootstrap";
 import {useParams} from 'react-router-dom'
-import {fetchOneConference} from "../http/ConferenceAPI";
+import {fetchOneConference} from "../http/ConferenceAPI"
+import { getOneUserInfoFromConference} from "../http/userAPI";
 import {fetchUsersInConference} from "../http/userAPI";
-import {Context} from "../index";
 const ConferenceInfo = () => {
     const [conference, setOneConference] = useState({})
     const [usersWithPresentations, setUsersWithPresentations] = useState([]);
     const {id} = useParams()
-    console.log(id)
+    const [userInfo, setUserInfo] = useState('')
+
     useEffect(() => {
+        getOneUserInfoFromConference().then(data =>  setUserInfo(data))
         fetchOneConference(id).then(data => setOneConference(data))
         fetchUsersInConference(id).then(data => setUsersWithPresentations(data))
     }, [id])
@@ -76,23 +78,36 @@ const ConferenceInfo = () => {
                                       <Col style={{borderColor: "white", borderStyle: "solid"}}>
                                         <div>Руководитель секции</div>
                                     </Col>
-                                      <Col style={{borderColor: "white", borderStyle: "solid"}}>
+                                    <Col style={{borderColor: "white", borderStyle: "solid"}}>
                                         <div>Контакты</div>
                                     </Col>
+                                    <Col style={{borderColor: "white", borderStyle: "solid"}}>
+                                        <div>ФИО</div>
+                                    </Col>
                                   </Row>
-                                  {usersWithPresentations.map(user => (
-                                    <Row key={user.id}>
-                                        <Col style={{ borderColor: "white", borderStyle: "solid" }}>
-                                            <div>{user.section}</div>
-                                        </Col>
-                                        <Col style={{ borderColor: "white", borderStyle: "solid" }}>
-                                            <div>{user.teacher}</div>
-                                        </Col>
-                                        <Col style={{ borderColor: "white", borderStyle: "solid" }}>
-                                            <div>{user.authors}</div>
-                                        </Col>
-                                    </Row>
-                                  ))}
+                                  {usersWithPresentations.map(user => {
+                                      if(userInfo) {
+                                          const userInfos = userInfo.find(info => info.email === user.authors);
+                                          return (
+                                              <Row key={user.id}>
+                                                  <Col style={{borderColor: "white", borderStyle: "solid"}}>
+                                                      <div>{user.section}</div>
+                                                  </Col>
+                                                  <Col style={{borderColor: "white", borderStyle: "solid"}}>
+                                                      <div>{user.teacher}</div>
+                                                  </Col>
+                                                  <Col style={{borderColor: "white", borderStyle: "solid"}}>
+                                                      <div>{user.authors}</div>
+                                                  </Col>
+                                                  <Col style={{borderColor: "white", borderStyle: "solid"}}>
+                                                      {userInfos.surname}{' '}
+                                                      {userInfos.name && userInfos.name.charAt(0)}.
+                                                      {userInfos.patronymic && userInfos.patronymic[0]}.
+                                                  </Col>
+                                              </Row>
+                                          );
+                                      }
+                                })}
                             </Row>
                           </Row>
                         </Row>

@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import { Button, Card, Col, Row } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { CONFERENCEITEM_ROUTE } from "../../utils/consts";
 import ConfReg from "./ConfReg";
+import {getOneUserInfo} from "../../http/userAPI";
+import {Context} from "../../index";
 
 const ConferenceItem = ({ conference }) => {
   const history = useNavigate();

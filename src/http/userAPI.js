@@ -75,3 +75,8 @@ export const getOneUserInfo = async (id) => {
     const {data} = await $authHost.get('api/user/getoneuserinfo', {params:{id}})
     return data
 }
+
+export const getOneUserInfoFromConference = async (id) => {
+    const {data} = await $authHost.get('api/user/getoneuserinfofromconference', {params: {id}})
+    return data
+}

@@ -2,7 +2,13 @@ import React, { useContext, useEffect, useState } from 'react';
 import {Button, Card, Col, Container, Dropdown, Form, Row} from "react-bootstrap";
 import { useParams } from 'react-router-dom'
 import { fetchOneConference, fetchOneParticipant, updateUserStatus } from "../http/ConferenceAPI";
-import {fetchUsersInConference, uploadCorrectedArticle, uploadTeacherArticle, userInfo} from "../http/userAPI";
+import {
+    fetchUsersInConference,
+    getOneUserInfoFromConference,
+    uploadCorrectedArticle,
+    uploadTeacherArticle,
+    userInfo
+} from "../http/userAPI";
 import { Context } from "../index";
 import FileIcon from "../components/conferenceComponents/FilePath";
 const ConferenceInfoAdmin = () => {
@@ -14,8 +20,10 @@ const ConferenceInfoAdmin = () => {
     const { id } = useParams()
     const [file, setFile] = useState('');
     const [authors, setAuthors]= useState('')
+    const [userInfo, setUserInfo] = useState('')
     useEffect(() => {
         const fetchData = async () => {
+            getOneUserInfoFromConference().then(data =>  setUserInfo(data))
             const conferenceData = await fetchOneConference(id);
             setOneConference(conferenceData);
             const usersData = await fetchUsersInConference(id);
@@ -139,22 +147,35 @@ const ConferenceInfoAdmin = () => {
                                                 <Col style={{ borderColor: "white", borderStyle: "solid" }}>
                                                     <div>Контакты</div>
                                                 </Col>
+                                                <Col style={{ borderColor: "white", borderStyle: "solid" }}>
+                                                    <div>ФИО</div>
+                                                </Col>
                                             </Row>
                                         </Row>
                                         <Row style={{ overflowY: "auto"}}>
-                                            {usersWithPresentations.map(user => (
-                                                <Row key={user.id}>
-                                                    <Col style={{ borderColor: "white", borderStyle: "solid" }}>
-                                                        <div>{user.section}</div>
-                                                    </Col>
-                                                    <Col style={{ borderColor: "white", borderStyle: "solid" }}>
-                                                        <div>{user.teacher}</div>
-                                                    </Col>
-                                                    <Col style={{ borderColor: "white", borderStyle: "solid" }}>
-                                                        <div>{user.authors}</div>
-                                                    </Col>
-                                                </Row>
-                                            ))}
+                                            {usersWithPresentations.map(user => {
+                                                  if(userInfo) {
+                                                      const userInfos = userInfo.find(info => info.email === user.authors);
+                                                      return (
+                                                          <Row key={user.id}>
+                                                              <Col style={{borderColor: "white", borderStyle: "solid"}}>
+                                                                  <div>{user.section}</div>
+                                                              </Col>
+                                                              <Col style={{borderColor: "white", borderStyle: "solid"}}>
+                                                                  <div>{user.teacher}</div>
+                                                              </Col>
+                                                              <Col style={{borderColor: "white", borderStyle: "solid"}}>
+                                                                  <div>{user.authors}</div>
+                                                              </Col>
+                                                              <Col style={{borderColor: "white", borderStyle: "solid"}}>
+                                                                  {userInfos.surname}{' '}
+                                                                  {userInfos.name && userInfos.name.charAt(0)}.
+                                                                  {userInfos.patronymic && userInfos.patronymic[0]}.
+                                                              </Col>
+                                                          </Row>
+                                                      );
+                                                  }
+                                            })}
                                         </Row>
                                     </Row>
                                 </Row>
