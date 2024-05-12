@@ -17,6 +17,7 @@ const Auth = observer(() => {
     const [surname, setSurname] = useState('')
     const [patronymic, setPatronymic] = useState('')
     const [passwordsMatch, setPasswordsMatch] = useState(true);
+    const [phone, setPhone] = useState('');
     const click = () => {
         try {
             let data;
@@ -26,7 +27,8 @@ const Auth = observer(() => {
                     return; // Прерываем выполнение функции
                 }
                 try {
-                    data = user.Registration(email, password, name, surname, patronymic)
+                    console.log(phone)
+                    data = user.Registration(email, password, name, surname, patronymic, phone)
                     if(data) {
                         console.log(user.user.isActivated)
                         alert("Подтвердите почту")
@@ -126,6 +128,16 @@ const Auth = observer(() => {
                                 placeholder="Отчество"
                                 value={patronymic}
                                 onChange={e => setPatronymic(e.target.value)}
+                            />
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <Form.Control
+                                className="mt-3"
+                                placeholder="Телефон"
+                                value={phone}
+                                onChange={e => setPhone(e.target.value)}
                             />
                         </Col>
                     </Row>

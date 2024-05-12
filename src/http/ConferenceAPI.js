@@ -14,8 +14,8 @@ export const fetchOneConference = async (id) => {
     return data
 }
 
-export const fetchOneParticipant = async (id) => {
-    const {data} = await $authHost.get('api/conferences/oneparticipant/' + id)
+export const fetchOneParticipant = async (id, user) => {
+    const {data} = await $authHost.get('api/conferences/oneparticipant/' + id, {params:{user}})
     return data
 }
 

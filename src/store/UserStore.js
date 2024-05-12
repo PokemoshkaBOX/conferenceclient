@@ -11,6 +11,7 @@ export default class UserStore{
         this._users = []
         this._selectedUser = {}
         this._isActivated = false
+        this._conferenceUsers = {}
         makeAutoObservable(this)
     }
     setIsActivated(isActivated){
@@ -33,6 +34,12 @@ export default class UserStore{
         this._user = user
     }
 
+    setConferenceUsers(user){
+        this._conferenceUsers = user
+    }
+    get ConferenceUser(){
+        return this._conferenceUsers
+    }
     get selectedUser(){
         return this._selectedUser
     }
@@ -90,9 +97,9 @@ export default class UserStore{
         }
     }
 
-    async Registration(email, password, name, surname, patronymic) {
+    async Registration(email, password, name, surname, patronymic, phone) {
         try {
-            const response = await registration(email, password, name, surname, patronymic);
+            const response = await registration(email, password, name, surname, patronymic, phone);
             localStorage.setItem('token', response.accessToken)
             console.log(response.user)
             this.setUser(response.user)

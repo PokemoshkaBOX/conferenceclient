@@ -1,6 +1,6 @@
 import {$authHost, $host} from "./index";
-export const registration = async (email, password, name, surname, patronymic) =>{
-    const {data} = await $host.post('api/user/registration', {email, password, name, surname, patronymic})
+export const registration = async (email, password, name, surname, patronymic, phone) =>{
+    const {data} = await $host.post('api/user/registration', {email, password, name, surname, patronymic, phone})
     localStorage.setItem('token', data.refreshToken)
     return data
 }
@@ -42,8 +42,8 @@ export const editUser = async(id, email, role)=>{
     return data
 }
 
-export const fetchUsersInConference = async(id)=>{
-    const {data} = await $authHost.get('api/user/conferenceuser', {params: {id}})
+export const fetchUsersInConference = async(id, user)=>{
+    const {data} = await $authHost.get('api/user/conferenceuser', {params: {id, user}})
     return data
 }
 

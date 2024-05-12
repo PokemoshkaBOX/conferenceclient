@@ -3,7 +3,7 @@ import {Button, Card, Col, Container, Dropdown, Form, Row} from "react-bootstrap
 import { useParams } from 'react-router-dom'
 import { fetchOneConference, fetchOneParticipant, updateUserStatus } from "../http/ConferenceAPI";
 import {
-    fetchUsersInConference,
+    fetchUsersInConference, getAllUsers,
     getOneUserInfoFromConference,
     uploadCorrectedArticle,
     uploadTeacherArticle,
@@ -11,6 +11,9 @@ import {
 } from "../http/userAPI";
 import { Context } from "../index";
 import FileIcon from "../components/conferenceComponents/FilePath";
+import Search from "../components/Search";
+import UserSearch from "../components/UserComponents/UserSearch";
+import UserSearch1 from "../components/UserComponents/UserSearch1";
 const ConferenceInfoAdmin = () => {
     const {user} = useContext(Context)
     const [conference, setOneConference] = useState({})
@@ -21,7 +24,12 @@ const ConferenceInfoAdmin = () => {
     const [file, setFile] = useState('');
     const [authors, setAuthors]= useState('')
     const [userInfo, setUserInfo] = useState('')
+    const [searchValue, setSearchValue] = useState('');
+
+
     useEffect(() => {
+       fetchUsersInConference(id, user.ConferenceUser).then(data =>
+            setUsersWithPresentations(data))
         const fetchData = async () => {
             getOneUserInfoFromConference().then(data =>  setUserInfo(data))
             const conferenceData = await fetchOneConference(id);
@@ -152,6 +160,7 @@ const ConferenceInfoAdmin = () => {
                                                 </Col>
                                             </Row>
                                         </Row>
+
                                         <Row style={{ overflowY: "auto"}}>
                                             {usersWithPresentations.map(user => {
                                                   if(userInfo) {
@@ -184,47 +193,65 @@ const ConferenceInfoAdmin = () => {
                     </Col>
                     <Col style={{ justifyItems: "center" }}>
                         <div>Таблица участников конференции</div>
+                        <UserSearch1 setSearchValue={setSearchValue} />
                         <Row>
                             <Row>
                                 <Col style={{ borderColor: "black", borderStyle: "solid" }} md={3}>
                                     <div>Участник</div>
                                 </Col>
-                                <Col style={{ borderColor: "black", borderStyle: "solid" }} md={3}>
+                                <Col style={{ borderColor: "black", borderStyle: "solid" }} md={2}>
                                     <div>Статус</div>
+                                </Col>
+                                <Col style={{ borderColor: "black", borderStyle: "solid" }} md={2}>
+                                                <div>телефон</div>
                                 </Col>
                                 <Col style={{ borderColor: "black", borderStyle: "solid" }} md={3}>
                                     <div>Пришёл/Не пришёл</div>
                                 </Col>
                             </Row>
-                            {oneParticipant.map(user => {
+                            {oneParticipant.map(user  => {
                                 const author = getPresentationForUser(user.id);
                                 if (author) {
-                                    return (
-                                        <Row key={user.id}>
-                                            <Col style={{ borderColor: "black", borderStyle: "solid" }} md={3}>
-                                                <div>{author.authors}</div>
-                                            </Col>
-                                            <Col style={{ borderColor: "black", borderStyle: "solid" }} md={3}>
-                                                <div>{user.role}</div>
-                                            </Col>
-                                            <Col style={{ borderColor: "black", borderStyle: "solid" }} md={3}>
-                                                <Dropdown>
-                                                    <Dropdown.Toggle variant="success" id="dropdown-basic">
-                                                        {statuses[user.id] || user.status || 'Выбрать статус'}
-                                                    </Dropdown.Toggle>
-                                                    <Dropdown.Menu>
-                                                        <Dropdown.Item onClick={() => handleStatusSelect(user.id, 'Пришёл')}>Пришёл</Dropdown.Item>
-                                                        <Dropdown.Item onClick={() => handleStatusSelect(user.id, 'Не пришёл')}>Не пришёл</Dropdown.Item>
-                                                    </Dropdown.Menu>
-                                                </Dropdown>
-                                            </Col>
-                                            <Col>
-                                                <Button onClick={() => handleStatusChange(user.id)}>
-                                                    Подтвердить
-                                                </Button>
-                                            </Col>
-                                        </Row>
-                                    );
+                                    console.log(searchValue)
+                                    const userInfos = userInfo.find(info =>
+                                            info.email === author.authors && author.authors.includes(searchValue)
+                                        );
+                                    console.log(userInfos)
+                                    if (userInfos) {
+                                        console.log(userInfos)
+                                        return (
+                                            <Row key={user.id}>
+                                                <Col style={{borderColor: "black", borderStyle: "solid"}} md={3}>
+                                                    <div>{author.authors}</div>
+                                                </Col>
+                                                <Col style={{borderColor: "black", borderStyle: "solid"}} md={2}>
+                                                    <div>{user.role}</div>
+                                                </Col>
+                                                <Col style={{borderColor: "black", borderStyle: "solid"}} md={2}>
+                                                    <div>{userInfos.phone}</div>
+                                                </Col>
+                                                <Col style={{borderColor: "black", borderStyle: "solid"}} md={3}>
+                                                    <Dropdown>
+                                                        <Dropdown.Toggle variant="success" id="dropdown-basic">
+                                                            {statuses[user.id] || user.status || 'Выбрать статус'}
+                                                        </Dropdown.Toggle>
+                                                        <Dropdown.Menu>
+                                                            <Dropdown.Item
+                                                                onClick={() => handleStatusSelect(user.id, 'Пришёл')}>Пришёл</Dropdown.Item>
+                                                            <Dropdown.Item
+                                                                onClick={() => handleStatusSelect(user.id, 'Не пришёл')}>Не
+                                                                пришёл</Dropdown.Item>
+                                                        </Dropdown.Menu>
+                                                    </Dropdown>
+                                                </Col>
+                                                <Col md={2}>
+                                                    <Button onClick={() => handleStatusChange(user.id)}>
+                                                        Подтвердить
+                                                    </Button>
+                                                </Col>
+                                            </Row>
+                                        );
+                                    }
                                 }
                             })}
                         </Row>
