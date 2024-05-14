@@ -200,7 +200,7 @@ const ConferenceInfoAdmin = () => {
                                     <div>Участник</div>
                                 </Col>
                                 <Col style={{ borderColor: "black", borderStyle: "solid" }} md={2}>
-                                    <div>Статус</div>
+                                    <div>ФИО</div>
                                 </Col>
                                 <Col style={{ borderColor: "black", borderStyle: "solid" }} md={2}>
                                                 <div>телефон</div>
@@ -225,7 +225,10 @@ const ConferenceInfoAdmin = () => {
                                                     <div>{author.authors}</div>
                                                 </Col>
                                                 <Col style={{borderColor: "black", borderStyle: "solid"}} md={2}>
-                                                    <div>{user.role}</div>
+                                                    <div>   {userInfos.surname}{' '}
+                                                            {userInfos.name && userInfos.name.charAt(0)}.
+                                                            {userInfos.patronymic && userInfos.patronymic[0]}.
+                                                    </div>
                                                 </Col>
                                                 <Col style={{borderColor: "black", borderStyle: "solid"}} md={2}>
                                                     <div>{userInfos.phone}</div>
